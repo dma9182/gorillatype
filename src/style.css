@@ -294,3 +294,30 @@ code {
     border-right-color: var(--border);
   }
 }
+
+
+body {
+  background: #171916;
+  color: white;
+  font-family: monospace;
+}
+
+#gorilla {
+  max-width: 700px;
+  margin: 100px auto;
+}
+
+h1 {
+  color: greenyellow;
+}
+
+.snippet {
+  background: #252821;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+}
