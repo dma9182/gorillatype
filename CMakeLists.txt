@@ -12,3 +12,16 @@ project(gorillatype LANGUAGES CXX)
 add_executable(gorillatype
         src/main.cpp
 )
+
+include(FetchContent)
+FetchContent_Declare(ftxui
+  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+  GIT_TAG main # or a specific version like v7.0.3
+)
+FetchContent_MakeAvailable(ftxui)
+
+target_link_libraries(gorillatype PRIVATE
+ftxui::component
+ftxui::dom
+ftxui::screen
+)

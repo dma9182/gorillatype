@@ -12,7 +12,8 @@ dist
 dist-ssr
 *.local
 build/
-
+compile_commands.json
+.cache
 
 # Editor directories and files
 .vscode/*
@@ -24,6 +25,7 @@ build/
 *.njsproj
 *.sln
 *.sw?
+.wakatime-project
 
 node_modules/
 dist/

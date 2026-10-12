@@ -1,36 +1,42 @@
-#include <iostream>
-#include <string>
-#include <chrono>
-#include <algorithm>
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
+#include <memory>  // for allocator, __shared_ptr_access
+#include <string>  // for char_traits, operator+, string, basic_string
+
+#include "ftxui/component/app.hpp"             // for Component, App
+#include "ftxui/component/captured_mouse.hpp"  // for ftxui
+#include "ftxui/component/component.hpp"       // for Input, Renderer, Vertical
+#include "ftxui/component/component_base.hpp"  // for ComponentBase
+#include "ftxui/component/component_options.hpp"  // for InputOption
+#include "ftxui/dom/elements.hpp"  // for text, hbox, separator, Element, operator|, vbox, border
+#include "ftxui/util/ref.hpp"  // for Ref
 
 int main() {
-  const std::string prompt = "The quick brown fox jumps over the lazy dog";
-  std::string input;
+  using namespace ftxui;
 
-  size_t mismatch = 0;
+  // The data:
+  std::string first_name;
+  std::string last_name;
 
-  std::cout << prompt << '\n';
+  // The basic input components:
+  Component input_first_name = Input(&first_name, "literal string");
 
-  auto start = std::chrono::steady_clock::now();
-  std::getline(std::cin, input);
-  auto end = std::chrono::steady_clock::now();
-  auto elapsed = std::chrono::duration<double>(end-start);
+  // The component tree:
+  auto component = Container::Vertical({
+      input_first_name,
+  });
 
-  for(size_t i = 0; i < std::min(input.size(), prompt.size()); i++){
-      mismatch+=(input[i]!=prompt[i]);
-  }
+  // Tweak how the component tree is rendered:
+  auto renderer = Renderer(component, [&] {
+    return vbox({
+               hbox(text("Input : "), input_first_name->Render()),
+               separator(),
+               text("Output : " + first_name),
+           }) |
+           border;
+  });
 
-  float accuracy = static_cast<float>(input.size()-mismatch)/input.size();
-  double rawWpm = static_cast<double>(input.size())*12/elapsed.count();
-  double wpm = static_cast<double>(input.size()-mismatch)*12/elapsed.count();
-
-  std::cout << "Mismatches : " << mismatch << '\n';
-  std::cout << "Character Entered : " << input.size() << '\n';
-  std::cout << "Prompt length : " << prompt.length() << '\n';
-  std::cout << "Accuracy : " << accuracy << '\n';
-  std::cout << "Time Elapsed : " << elapsed << '\n';
-  std::cout << "Raw WPM : " << rawWpm << '\n';
-  std::cout << "WPM : " << wpm << '\n';
-
-  return 0;
+  auto screen = App::TerminalOutput();
+  screen.Loop(renderer);
 }
